@@ -371,7 +371,7 @@ namespace lbw {
                     throw std::invalid_argument("Begin greater than end");
                 else if (end > _maxValue)
                     throw std::invalid_argument("Value is greater than max allowed element");
-
+a1nsworth
                 while (begin != end) {
                     if (find(begin) && binaryPredicate(begin))
                         erase(begin);
