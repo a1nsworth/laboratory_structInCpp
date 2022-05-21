@@ -536,9 +536,50 @@ namespace lbw {
             return _data != other._data;
         }
     };
+
+    class PrefixSum {
+    private:
+        std::vector<long long> _prefixSum;
+    public:
+        template<typename ForwardIter1, typename ForwardIter2>
+        PrefixSum(ForwardIter1 first, const ForwardIter2 last) {
+            _prefixSum.push_back(0);
+            while (first++ != last)
+                _prefixSum.push_back(_prefixSum.back() + *first);
+        }
+
+        template<typename T>
+        PrefixSum(const std::vector<T> &v) : PrefixSum(v.begin(), v.end) {}
+
+        template<typename T>
+        PrefixSum(const T *a, const size_t n) : PrefixSum(a, a + n) {}
+
+        long long getSum(const size_t l, const size_t r) const {
+            return _prefixSum[r] - _prefixSum[l];
+        }
+
+        long long getSum() const {
+            return _prefixSum.back();
+        }
+
+        void set(const long long value, const size_t i) {
+            try {
+                if (i >= _prefixSum.size())
+                    throw std::invalid_argument("Invalid index for set");
+
+
+            } catch (const std::exception &e) {
+                std::cerr << e.what();
+            }
+            // 1 2 3 4 5
+            // 0 1 3 6 10 15
+            //
+        }
+    };
 } // namespace lbw
 
 int main() {
+
 
     return 0;
 }
