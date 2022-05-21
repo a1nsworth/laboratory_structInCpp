@@ -1,7 +1,3 @@
-//
-// Created by a1nsworth on 5/21/22.
-//
-
 #include <iostream>
 #include <numeric>
 #include <exception>
@@ -538,6 +534,86 @@ namespace lbw {
 
         bool operator!=(const BitSet &other) const {
             return _data != other._data;
+        }
+    };
+
+    /**
+     * Вектор префиксных сум, где [0] = 0.
+     */
+    class PrefixSum {
+    private:
+        std::vector<long long> _prefixSum;
+    public:
+        /**
+         * Инициализирует префиксный вектор сумм [first; last)
+         *
+         * @param first итератор на начало коллекции
+         * @param last итератор на конец колекции
+         */
+        template<typename ForwardIter1, typename ForwardIter2>
+        PrefixSum(ForwardIter1 first, const ForwardIter2 last) {
+            _prefixSum.push_back(0);
+            while (first++ != last)
+                _prefixSum.push_back(_prefixSum.back() + *first);
+        }
+
+        /**
+         *  Инициализирует вектор префиксных сумм из вектора.
+         *
+         * @tparam T любой целый тип
+         * @param v вектор из которого будет инициализирован вектор префиксных сумм
+         */
+        template<typename T>
+        PrefixSum(const std::vector<T> &v) : PrefixSum(v.begin(), v.end) {}
+
+        /**
+         *  Инициализирует вектор префиксных сумм из массива.
+         *
+         * @tparam T любой целый тип
+         * @param a указатель на ячейку памяти
+         * @param n размер
+         */
+        template<typename T>
+        PrefixSum(const T *a, const size_t n) : PrefixSum(a, a + n) {}
+
+        /**
+         * Получает префиксную сумму в диапазоне [l;r)
+         *
+         * @param l начало
+         * @param r конец не включительно
+         * @return Возвращает префиксную сумму в диапазоне [l;r)
+         */
+        long long getSum(const size_t l, const size_t r) const {
+            return _prefixSum[r] - _prefixSum[l];
+        }
+
+        /**
+         * Получает префиксную сумму всего вектора.
+         *
+         * @return Возвращает префиксную сумму всего вектора
+         */
+        long long getSum() const {
+            return _prefixSum.back();
+        }
+
+        /**
+         * Изменяет в изначальном массиве элемент и пересчитывает префиксную сумму.
+         *
+         * @param value элемент на который нужно заменить
+         * @param i индекс элемента, который нужно заменить
+         * @throw Выбрасывает исключение, если индекс выходит за диапазон
+         */
+        void set(const long long value, const size_t i) {
+            try {
+                if (i >= _prefixSum.size())
+                    throw std::invalid_argument("Invalid index");
+
+                for (size_t j = i + 1; j <= _prefixSum.size(); ++j)
+                    _prefixSum[j] -= -_prefixSum[j - 1] + value;
+
+            } catch (const std::exception &e) {
+                std::cerr << e.what();
+            }
         }
     };
 } // namespace lbw
