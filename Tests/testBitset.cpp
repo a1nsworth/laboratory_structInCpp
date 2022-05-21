@@ -225,7 +225,72 @@ TEST(Fraction_operator_multiplication, reduces) {
     auto res = f * d;
 
     // Asserts
-    ASSERT_TRUE(res.getNumenator() == -4);
+    ASSERT_TRUE(res.getNumenator() == 12);
     ASSERT_TRUE(res.getDenominator() == 1);
+}
+
+TEST(Fraction_operator_multiplication, reducesTwoFracIsNegative) {
+    // Arrange
+    Fraction<int> f(10, -5);
+    Fraction<int> d(-12,2);
+
+    // Act
+    auto res = f * d;
+
+    // Asserts
+    ASSERT_TRUE(res.getNumenator() == 12);
+    ASSERT_TRUE(res.getDenominator() == 1);
+}
+
+TEST(Fraction_operator_multiplication, oneIsNegative) {
+    // Arrange
+    Fraction<int> f(-10, 5);
+    Fraction<int> d(12,2);
+
+    // Act
+    auto res = f * d;
+
+    // Asserts
+    ASSERT_TRUE(res.getNumenator() == -12);
+    ASSERT_TRUE(res.getDenominator() == 1);
+}
+
+TEST(Fraction_operator_division, reducesTwoIsPositive) {
+    // Arrange
+    Fraction<int> f(10, 5);
+    Fraction<int> d(12,2);
+
+    // Act
+    auto res = f / d;
+
+    // Asserts
+    ASSERT_TRUE(res.getNumenator() == 1);
+    ASSERT_TRUE(res.getDenominator() == 3);
+}
+
+TEST(Fraction_operator_division, reducesTwoIsNegative) {
+    // Arrange
+    Fraction<int> f(10, -5);
+    Fraction<int> d(-12,2);
+
+    // Act
+    auto res = f / d;
+
+    // Asserts
+    ASSERT_TRUE(res.getNumenator() == 1);
+    ASSERT_TRUE(res.getDenominator() == 3);
+}
+
+TEST(Fraction_operator_division, reducesOneIsNegative) {
+    // Arrange
+    Fraction<int> f(10, 5);
+    Fraction<int> d(12,-2);
+
+    // Act
+    auto res = f / d;
+
+    // Asserts
+    ASSERT_TRUE(res.getNumenator() == -1);
+    ASSERT_TRUE(res.getDenominator() == 3);
 }
 

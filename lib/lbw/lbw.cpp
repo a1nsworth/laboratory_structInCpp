@@ -80,9 +80,8 @@ namespace lbw {
         friend std::istream &operator>>(std::istream &in, Fraction &f) {
             T numenator;
             T denominator;
-            in >> numenator;
+            in >> numenator >> denominator;
             try {
-                in >> denominator;
                 if (denominator == 0)
                     throw static_cast<std::string>("Divide by zero error in fraction!");
 
@@ -112,7 +111,7 @@ namespace lbw {
 
         Fraction operator*(const Fraction &other) const {
             auto _gcd = std::gcd(_numenator, other._denominator);
-            auto _gcd2 = std::gcd(other._numerator, _denominator);
+            auto _gcd2 = std::gcd(other._numenator, _denominator);
 
             Fraction res;
             res._numenator = (_numenator / _gcd) * (other._numenator / _gcd2);
