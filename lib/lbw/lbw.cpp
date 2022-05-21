@@ -181,6 +181,11 @@ namespace lbw {
         double getAsseleration() const {
             return _asseleration;
         }
+
+        void move(const size_t duration) {
+            _position = _position + _speed * duration + _asseleration * duration * duration / 2;
+            _speed += duration * _speed;
+        }
     };
 
     /**
