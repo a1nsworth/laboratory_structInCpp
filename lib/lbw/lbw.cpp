@@ -263,7 +263,7 @@ namespace lbw {
          *
          * @param a множество для инициализации множества
          */
-        BitSet(const BitSet &a) : BitSet(a._maxValue){
+        BitSet(const BitSet &a) : BitSet(a._maxValue) {
             _data = a._data;
             _power = a._power;
         }
@@ -274,10 +274,11 @@ namespace lbw {
          * @param maxValue максимальное значение хранящееся в множестве
          * @throw Выбрасывает исключение, если maxValue больше максимального допустимого значение для всех множеств
          */
-        BitSet(const unsigned maxValue) : _maxValue(maxValue) {
+        BitSet(const unsigned maxValue) {
             try {
                 if (maxValue > _MAX_VALUE_SUPPORTED)
                     throw std::invalid_argument("Value is greater than allowed");
+                const_cast<unsigned &>(_maxValue) = maxValue;
             } catch (const std::exception &e) {
                 std::cerr << e.what();
             }
@@ -292,7 +293,7 @@ namespace lbw {
             return _power;
         }
 
-         unsigned getMaxValue() const noexcept {
+        unsigned getMaxValue() const noexcept {
             return _maxValue;
         }
 
@@ -337,18 +338,13 @@ namespace lbw {
          * @return Возвращает первый элемент удовлетворяющий функции-предикату, если элемент не найден возвращает
          * Максимально допустимый элемент любого множества + 1;
          */
+        // TODO доделать
         unsigned find(unsigned begin, const unsigned end, std::function<bool(unsigned)> binaryPredicate) const {
             try {
                 if (begin > end)
                     throw std::invalid_argument("Begin greater than end");
                 else if (end > _maxValue)
                     throw std::invalid_argument("Value is greater than max allowed element");
-
-                while (begin != end) {
-                    if (find(begin) && binaryPredicate(begin))
-                        return begin;
-                    begin++;
-                }
 
             } catch (const std::exception &e) {
                 std::cerr << e.what();
@@ -382,6 +378,7 @@ namespace lbw {
          * @param end конечна позиция не включительно
          * @throw Выбрасывает исключение, если begin >= end или end больше максимально допустимого значения в множестве
          */
+        // TODO доделать
         void erase(unsigned begin, const unsigned end) {
             try {
                 if (begin >= end)
@@ -405,6 +402,7 @@ namespace lbw {
          * @param binaryPredicate бинарный предикат
          * @throw Выбрасывает исключение, если begin >= end или end больше максимально допустимого значения в множестве
          */
+        // TODO переделать
         void erase(unsigned begin, const unsigned end, std::function<bool(unsigned)> binaryPredicate) {
             try {
                 if (begin > end)
@@ -463,6 +461,9 @@ namespace lbw {
                     break;
                 }
 
+            if (!(lhs._data & rhs._data))
+                return BitSet(lhs._data & rhs._data, 0);
+
             return BitSet(lhs._data & rhs._data, maxValue);
         }
 
@@ -481,6 +482,9 @@ namespace lbw {
                     break;
                 }
 
+            if (!(lhs._data | rhs._data))
+                return BitSet(lhs._data | rhs._data, 0);
+
             return BitSet(lhs._data | rhs._data, maxValue);
         }
 
@@ -492,7 +496,10 @@ namespace lbw {
          * @return Возращает множество которое является результатом дополнения множества.
          */
         static BitSet addition(const BitSet &set) {
-            unsigned maxValue = 0;
+            if (set._data == _MAX_VALUE_SUPPORTED)
+                return BitSet(~set._data, 0);
+
+            int maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
                 if (!set.find(i)) {
                     maxValue = i;
@@ -517,6 +524,9 @@ namespace lbw {
                     break;
                 }
 
+            if (!(lhs._data & addition(rhs)._data))
+                return BitSet(lhs._data & addition(rhs)._data, 0);
+
             return BitSet(lhs._data & addition(rhs)._data, maxValue);
         }
 
@@ -530,20 +540,22 @@ namespace lbw {
         static BitSet symmetricDifference(const BitSet &lhs, const BitSet &rhs) {
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
-                if (lhs.find(i) && !rhs.find(i) || !lhs.find(i) && rhs.find(i)) {
+                if (lhs.find(i) ^ rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
+            if (!(lhs._data ^ rhs._data))
+                return BitSet(lhs._data ^ rhs._data, 0);
 
             return BitSet(lhs._data ^ addition(rhs)._data, maxValue);
         }
 
-        BitSet& operator=(const BitSet &other) noexcept {
-            const_cast<unsigned&>(_maxValue) = other._maxValue;
+        BitSet &operator=(const BitSet &other) noexcept {
+            const_cast<unsigned &>(_maxValue) = other._maxValue;
             _data = other._data;
             _power = other._power;
 
-             return *this;
+            return *this;
         }
 
         friend std::ostream &operator<<(std::ostream &out, const BitSet &a) noexcept {
@@ -593,7 +605,7 @@ namespace lbw {
                         return j;
                 }
 
-            } catch (const std::exception& e) {
+            } catch (const std::exception &e) {
                 std::cerr << e.what();
             }
         }
