@@ -287,6 +287,18 @@ namespace lbw {
             return _power;
         }
 
+        unsigned getMaxValue() const {
+            return _maxValue;
+        }
+
+        unsigned getData() const {
+            return _data;
+        }
+
+        unsigned getSize() const {
+            return _power;
+        }
+
         /**
          * Добовляет элемент в множество.
          *
