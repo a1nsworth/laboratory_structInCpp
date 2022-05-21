@@ -263,7 +263,7 @@ namespace lbw {
          *
          * @param a множество для инициализации множества
          */
-        BitSet(const BitSet &a) : BitSet(a._maxValue) {
+        BitSet(const BitSet &a) : BitSet(a._maxValue){
             _data = a._data;
             _power = a._power;
         }
@@ -288,15 +288,15 @@ namespace lbw {
          *
          * @return возвращает true, если множество пустое иначе false
          */
-        bool empty() const {
+        bool empty() const noexcept {
             return _power;
         }
 
-        unsigned getMaxValue() const {
+         unsigned getMaxValue() const noexcept {
             return _maxValue;
         }
 
-        unsigned getData() const {
+        unsigned getData() const noexcept {
             return _data;
         }
 
@@ -323,7 +323,7 @@ namespace lbw {
          * @param x элемент для поиска
          * @return Возвращает true, если элемент есть в множестве иначе false.
          */
-        bool find(const unsigned x) const {
+        bool find(const unsigned x) const noexcept {
             return (_data >> x) & 1;
         }
 
@@ -425,7 +425,7 @@ namespace lbw {
         /**
          * @return Возвращает можность множества
          */
-        unsigned getPower() const {
+        unsigned getPower() const noexcept {
             return _power;
         }
 
@@ -434,7 +434,7 @@ namespace lbw {
          * @param set множество
          * @return Возвращает true, если set является надмножеством данного множества, иначе false
          */
-        bool isSubset(const BitSet &set) const {
+        bool isSubset(const BitSet &set) const noexcept {
             return (_data | set._data) == set._data;
         }
 
@@ -444,7 +444,7 @@ namespace lbw {
          * @param set множество
          * @return Возвращает true, если set является надмножеством subset множества, иначе false
          */
-        static bool isSubset(const BitSet &subset, const BitSet &set) {
+        static bool isSubset(const BitSet &subset, const BitSet &set) noexcept {
             return (set._data | subset._data) == set._data;
         }
 
@@ -538,11 +538,15 @@ namespace lbw {
             return BitSet(lhs._data ^ addition(rhs)._data, maxValue);
         }
 
-        BitSet operator=(const BitSet &other) {
-            return BitSet(other);
+        BitSet& operator=(const BitSet &other) noexcept {
+            const_cast<unsigned&>(_maxValue) = other._maxValue;
+            _data = other._data;
+            _power = other._power;
+
+             return *this;
         }
 
-        friend std::ostream &operator<<(std::ostream &out, const BitSet &a) {
+        friend std::ostream &operator<<(std::ostream &out, const BitSet &a) noexcept {
             out << '{';
             for (unsigned i = 0; i <= _MAX_VALUE_SUPPORTED; ++i)
                 if (a.find(i))
@@ -552,7 +556,7 @@ namespace lbw {
             return out;
         }
 
-        friend std::istream &operator>>(std::istream &in, BitSet &a) {
+        friend std::istream &operator>>(std::istream &in, BitSet &a) noexcept {
             unsigned size, maxValue;
             in >> size >> maxValue;
 
@@ -568,11 +572,11 @@ namespace lbw {
             return in;
         }
 
-        bool operator==(const BitSet &other) const {
+        bool operator==(const BitSet &other) const noexcept {
             return _data == other._data;
         }
 
-        bool operator!=(const BitSet &other) const {
+        bool operator!=(const BitSet &other) const noexcept {
             return _data != other._data;
         }
 

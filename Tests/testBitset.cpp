@@ -26,4 +26,41 @@ TEST(BitSet_constraction_from_vector, simpleTest) {
     ASSERT_EQ(a.getPower(), 3);
 }
 
+TEST(BitSet_constraction_from_vector, simpleTest2) {
+    // Arrange and Act
+    BitSet a({1,2,3});
+
+    // Asserts
+    ASSERT_EQ(a.getData(), 14);
+    ASSERT_EQ(a.getMaxValue(), 3);
+    ASSERT_EQ(a.getPower(), 3);
+}
+
+TEST(BitSet_insert, onlyOne) {
+    // Arrange
+    BitSet a = {1,2,3,4};
+
+    // Act
+    a.insert(0);
+
+    // Asserts
+    ASSERT_EQ(a.getData(), 31);
+    ASSERT_EQ(a.getMaxValue(), 4);
+    ASSERT_EQ(a.getPower(), 5);
+}
+
+TEST(BitSet_insert, twoElmentsAndOneIsReapeat) {
+    // Arrange
+    BitSet a = {1,2,3,4};
+
+    // Act
+    a.insert(0);
+    a.insert(1);
+
+    // Asserts
+    ASSERT_EQ(a.getData(), 31);
+    ASSERT_EQ(a.getMaxValue(), 4);
+    ASSERT_EQ(a.getPower(), 5);
+}
+
 
