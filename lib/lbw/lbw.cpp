@@ -249,7 +249,12 @@ namespace lbw {
          * @param v вектор для инициализации множества
          */
         BitSet(const std::vector<unsigned> &v) : BitSet(*std::max_element(v.begin(), v.end())) {
-            for (auto &element: v)
+            for (const auto &element: v)
+                insert(element);
+        }
+
+        BitSet(const std::initializer_list<unsigned> &l) : BitSet(*std::max_element(l.begin(), l.end())) {
+            for (auto &element: l)
                 insert(element);
         }
 
@@ -293,10 +298,6 @@ namespace lbw {
 
         unsigned getData() const {
             return _data;
-        }
-
-        unsigned getSize() const {
-            return _power;
         }
 
         /**
@@ -573,6 +574,24 @@ namespace lbw {
 
         bool operator!=(const BitSet &other) const {
             return _data != other._data;
+        }
+
+        unsigned operator[](const size_t i) const {
+            try {
+                if (i >= _power)
+                    throw std::out_of_range("Out of range");
+                size_t k = 0;
+                for (unsigned j = 0; j <= _MAX_VALUE_SUPPORTED; ++j) {
+                    unsigned num = (_data >> j) & 1;
+                    if (num)
+                        k++;
+                    if (num && k == i)
+                        return j;
+                }
+
+            } catch (const std::exception& e) {
+                std::cerr << e.what();
+            }
         }
     };
 

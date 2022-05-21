@@ -18,10 +18,12 @@ TEST(BitSet_constraction_emptySet, simpleTest) {
 
 TEST(BitSet_constraction_from_vector, simpleTest) {
     // Arrange and Act
-    BitSet a({1,2,3});
+    BitSet a = {1,2,3};
 
     // Asserts
-    ASSERT_EQ(a.getMaxValue(), 4);
+    ASSERT_EQ(a.getData(), 14);
+    ASSERT_EQ(a.getMaxValue(), 3);
+    ASSERT_EQ(a.getPower(), 3);
 }
 
 
