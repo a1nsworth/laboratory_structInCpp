@@ -8,4 +8,5 @@
 
 TEST(a, b) {
     lbw::Fraction<int> c;
+
 }
