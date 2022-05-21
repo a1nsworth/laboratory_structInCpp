@@ -33,7 +33,7 @@ namespace lbw {
          *
          * @throw Выбрасывает исключение, если Знаменатель равен 0.
          */
-        Fraction(T numenator, T denominator) {
+        Fraction(const T numenator, const T denominator) {
             try {
                 if (denominator == 0)
                     throw static_cast<std::string>("Divide by zero error in fraction!");
@@ -59,6 +59,14 @@ namespace lbw {
             auto _gcd = std::gcd(_numenator, _denominator);
             _numenator /= _gcd;
             _denominator /= _gcd;
+        }
+
+        T getNumenator() const {
+            return _numenator;
+        }
+
+        T getDenominator() const {
+            return _denominator;
         }
 
         friend std::ostream &operator<<(std::ostream &out, const Fraction &f) {
@@ -91,9 +99,11 @@ namespace lbw {
             auto _lcm = std::lcm(_denominator, other._denominator);
 
             Fraction res;
-            res._numenator = _numenator + (_lcm / _denominator) + other._numenator * (_lcm / other._denominator);
+            res._numenator = _numenator * (_lcm / _denominator) + other._numenator * (_lcm / other._denominator);
+            res._denominator = _lcm;
 
-            return res.reduceFraction();
+            res.reduceFraction();
+            return res;
         }
 
         Fraction operator-(const Fraction &other) const {
@@ -104,12 +114,24 @@ namespace lbw {
             auto _gcd = std::gcd(_numenator, other._denominator);
             auto _gcd2 = std::gcd(other._numerator, _denominator);
 
-            return {(_numenator / _gcd) * (other._numenator / _gcd2),
-                    (_denominator / _gcd2) * (other._denominator / _gcd)};
+            Fraction res;
+            res._numenator = (_numenator / _gcd) * (other._numenator / _gcd2);
+            res._denominator = (_denominator / _gcd2) * (other._denominator / _gcd);
+
+            res.reduceFraction();
+            return res;
         }
 
         Fraction operator/(const Fraction &other) {
             return (Fraction) {_numenator, _denominator} * (Fraction) {other._denominator, other._numenator};
+        }
+
+        bool operator==(const Fraction &other) const {
+            return _numenator == other._numenator && _denominator == other._denominator;
+        }
+
+        bool operator!=(const Fraction &other) const {
+            return !(_numenator == other._numenator && _denominator == other._denominator);
         }
     };
 
@@ -246,6 +268,7 @@ namespace lbw {
          * Инициализирует пустое множество с переданным максимальным значением
          *
          * @param maxValue максимальное значение хранящееся в множестве
+         * @throw Выбрасывает исключение, если maxValue больше максимального допустимого значение для всех множеств
          */
         BitSet(const unsigned maxValue) : _maxValue(maxValue) {
             try {
