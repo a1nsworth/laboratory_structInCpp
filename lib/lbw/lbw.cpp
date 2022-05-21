@@ -1,3 +1,7 @@
+//
+// Created by a1nsworth on 5/21/22.
+//
+
 #include <iostream>
 #include <numeric>
 #include <exception>
@@ -537,8 +541,3 @@ namespace lbw {
         }
     };
 } // namespace lbw
-
-int main() {
-
-    return 0;
-}

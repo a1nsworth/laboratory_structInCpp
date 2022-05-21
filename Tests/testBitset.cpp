@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
-TEST(a, b) {
+#include "../lib/lbw/lbw.cpp"
 
+TEST(a, b) {
+    lbw::Fraction<int> c;
 }
