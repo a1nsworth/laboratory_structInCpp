@@ -3,6 +3,7 @@
 #include <exception>
 #include <vector>
 #include <functional>
+#include <limits>
 
 namespace lbw {
 
@@ -235,9 +236,10 @@ namespace lbw {
          */
         BitSet(const uint32_t data, const unsigned maxValue) : BitSet(maxValue) {
             _data = data;
-            for (unsigned i = 0; i <= maxValue; ++i)
-                if (find(i))
-                    _power++;
+            if (!empty())
+                for (unsigned i = 0; i <= maxValue; ++i)
+                    if (find(i))
+                        _power++;
         }
 
     public:
@@ -350,7 +352,7 @@ namespace lbw {
                 std::cerr << e.what();
             }
 
-            return _MAX_VALUE_SUPPORTED + 1;
+            return 0;
         }
 
         /**
@@ -452,17 +454,19 @@ namespace lbw {
          * @param lhs множество
          * @param rhs множество
          * @return Возращает множество которое является результатом пересечения двух множеств.
+         * Если в результате получилось пустое множество, то возвратится пустое множество и с максимальным
+         * значением данного множества равным максимальное допустимое как таковым + 1
          */
         static BitSet insertions(const BitSet &lhs, const BitSet &rhs) {
+            if (!(lhs._data & rhs._data))
+                return BitSet(lhs._data & rhs._data, 0);
+
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
-                if (lhs.find(i) || rhs.find(i)) {
+                if (lhs.find(i) && rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
-
-            if (!(lhs._data & rhs._data))
-                return BitSet(lhs._data & rhs._data, 0);
 
             return BitSet(lhs._data & rhs._data, maxValue);
         }
@@ -473,17 +477,19 @@ namespace lbw {
          * @param lhs множество
          * @param rhs множество
          * @return Возращает множество которое является результатом объеденения двух множеств.
+         * Если в результате получилось пустое множество, то возвратится пустое множество и с максимальным
+         * значением данного множества равным максимальное допустимое как таковым + 1
          */
         static BitSet union_(const BitSet &lhs, const BitSet &rhs) {
+            if (!(lhs._data | rhs._data))
+                return BitSet(lhs._data | rhs._data, 0);
+
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
                 if (lhs.find(i) || rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
-
-            if (!(lhs._data | rhs._data))
-                return BitSet(lhs._data | rhs._data, 0);
 
             return BitSet(lhs._data | rhs._data, maxValue);
         }
@@ -494,12 +500,14 @@ namespace lbw {
          *
          * @param set множество
          * @return Возращает множество которое является результатом дополнения множества.
+         * Если в результате получилось пустое множество, то возвратится пустое множество и с максимальным
+         * значением данного множества равным максимальное допустимое как таковым + 1
          */
         static BitSet addition(const BitSet &set) {
-            if (set._data == _MAX_VALUE_SUPPORTED)
+            if (set._data == std::numeric_limits<uint32_t>::max())
                 return BitSet(~set._data, 0);
 
-            int maxValue = 0;
+            unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
                 if (!set.find(i)) {
                     maxValue = i;
@@ -515,17 +523,19 @@ namespace lbw {
          * @param lhs множество
          * @param rhs множество
          * @return Возращает множество которое является результатом разницы двух множеств.
+         * Если в результате получилось пустое множество, то возвратится пустое множество и с максимальным
+         * значением данного множества равным максимальное допустимое как таковым + 1
          */
         static BitSet difference(const BitSet &lhs, const BitSet &rhs) {
+            if (!(lhs._data & addition(rhs)._data))
+                return BitSet(lhs._data & addition(rhs)._data, 0);
+
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
                 if (lhs.find(i) || rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
-
-            if (!(lhs._data & addition(rhs)._data))
-                return BitSet(lhs._data & addition(rhs)._data, 0);
 
             return BitSet(lhs._data & addition(rhs)._data, maxValue);
         }
@@ -536,16 +546,19 @@ namespace lbw {
          * @param lhs множество
          * @param rhs множество
          * @return Возращает множество которое является результатом симметрической разницы двух множеств.
+         * Если в результате получилось пустое множество, то возвратится пустое множество и с максимальным
+         * значением данного множества равным максимальное допустимое как таковым + 1
          */
         static BitSet symmetricDifference(const BitSet &lhs, const BitSet &rhs) {
+            if (!(lhs._data ^ rhs._data))
+                return BitSet(lhs._data ^ rhs._data, 0);
+
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
                 if (lhs.find(i) ^ rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
-            if (!(lhs._data ^ rhs._data))
-                return BitSet(lhs._data ^ rhs._data, 0);
 
             return BitSet(lhs._data ^ addition(rhs)._data, maxValue);
         }

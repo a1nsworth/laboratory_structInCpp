@@ -251,3 +251,117 @@ TEST(BitSet_insertions, notEquals) {
     ASSERT_TRUE(c.getData() == 0);
     ASSERT_TRUE(c.getMaxValue() == 0);
 }
+
+TEST(BitSet_insertions, oneEqualElemnt) {
+    // Arrange
+    BitSet a = {1, 2, 3, 4};
+    BitSet b = {4, 6, 7, 8};
+
+    // Act
+    auto c = BitSet::insertions(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 1);
+    ASSERT_TRUE(c.getData() == 16);
+    ASSERT_TRUE(c.getMaxValue() == 4);
+}
+
+TEST(BitSet_insertions, twoEqualAtBorders) {
+    // Arrange
+    BitSet a = {1, 2, 3, 4};
+    BitSet b = {1, 6, 7, 4};
+
+    // Act
+    auto c = BitSet::insertions(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 2);
+    ASSERT_TRUE(c.getData() == 18);
+    ASSERT_TRUE(c.getMaxValue() == 4);
+}
+
+TEST(BitSet_insertions, twoSetAreEqual) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {0, 1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::insertions(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 5);
+    ASSERT_TRUE(c.getData() == 31);
+    ASSERT_TRUE(c.getMaxValue() == 4);
+}
+
+// ----------------
+TEST(BitSet_union, notEquals) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3};
+    BitSet b = {4, 5, 6, 7};
+
+    // Act
+    auto c = BitSet::union_(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 8);
+    ASSERT_TRUE(c.getData() == 255);
+    ASSERT_TRUE(c.getMaxValue() == 7);
+}
+
+TEST(BitSet_union, oneEqualElemnt) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3};
+    BitSet b = {4, 5, 6, 0};
+
+    // Act
+    auto c = BitSet::union_(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 7);
+    ASSERT_TRUE(c.getData() == 127);
+    ASSERT_TRUE(c.getMaxValue() == 6);
+}
+
+TEST(BitSet_union, twoEqualAtBorders) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3};
+    BitSet b = {0, 4, 5, 3};
+
+    // Act
+    auto c = BitSet::union_(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 6);
+    ASSERT_TRUE(c.getData() == 63);
+    ASSERT_TRUE(c.getMaxValue() == 5);
+}
+
+TEST(BitSet_union, twoSetAreEqual) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {0, 1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::insertions(a, b);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 5);
+    ASSERT_TRUE(c.getData() == 31);
+    ASSERT_TRUE(c.getMaxValue() == 4);
+}
+
+TEST(BitSet_addition, full) {
+    // Arrange
+    BitSet a(31);
+    for (size_t i = 0; i <= 31; ++i)
+        a.insert(i);
+
+    // Act
+    auto c = BitSet::addition(a);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 0);
+    ASSERT_TRUE(c.getData() == 0);
+    ASSERT_TRUE(c.getMaxValue() == 0);
+}
