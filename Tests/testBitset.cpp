@@ -396,13 +396,98 @@ TEST(BitSet_addition, onlyOneAtEnd) {
 
 TEST(BitSet_difference, oneIsUnique) {
     // Arrange
-    BitSet a(30);
+    BitSet a = {0, 1};
+    BitSet b = {2, 3};
 
     // Act
-    auto c = BitSet::addition(a);
+    auto c = BitSet::difference(a, b);
 
     // Asserts
-    ASSERT_TRUE(c.getPower() == 1);
-    ASSERT_EQ(c.getData(), (std::numeric_limits<uint32_t>::max() + (long long) 1) / 2);
-    ASSERT_TRUE(c.getMaxValue() == 31);
+    ASSERT_EQ(c.getPower(), 2);
+    ASSERT_EQ(c.getData(), 3);
+    ASSERT_EQ(c.getMaxValue(), 1);
+}
+
+TEST(BitSet_difference, twoAreEqual) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {0, 1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::difference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 0);
+    ASSERT_EQ(c.getData(), 0);
+    ASSERT_EQ(c.getMaxValue(), 0);
+}
+
+TEST(BitSet_difference, oneNotEqual) {
+    // Arrange
+    BitSet a = {5, 1, 2, 3, 4};
+    BitSet b = {0, 1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::difference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 1);
+    ASSERT_EQ(c.getData(), 32);
+    ASSERT_EQ(c.getMaxValue(), 5);
+}
+
+TEST(BitSet_difference, oneEqual) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {5, 6, 7, 8, 4};
+
+    // Act
+    auto c = BitSet::difference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 4);
+    ASSERT_EQ(c.getData(), 15);
+    ASSERT_EQ(c.getMaxValue(), 3);
+}
+
+TEST(BitSet_symmetricDifferece, twoEqual) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {0, 1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::symmetricDifference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 0);
+    ASSERT_EQ(c.getData(), 0);
+    ASSERT_EQ(c.getMaxValue(), 0);
+}
+
+TEST(BitSet_symmetricDifferece, twoUnique) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {5, 6, 7, 8, 9};
+
+    // Act
+    auto c = BitSet::symmetricDifference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 10);
+    ASSERT_EQ(c.getData(), 1023);
+    ASSERT_EQ(c.getMaxValue(), 9);
+}
+
+TEST(BitSet_symmetricDifferece, oneUniqueElement) {
+    // Arrange
+    BitSet a = {0, 1, 2, 3, 4};
+    BitSet b = {1, 2, 3, 4};
+
+    // Act
+    auto c = BitSet::symmetricDifference(a, b);
+
+    // Asserts
+    ASSERT_EQ(c.getPower(), 1);
+    ASSERT_EQ(c.getData(), 1);
+    ASSERT_EQ(c.getMaxValue(), 0);
 }

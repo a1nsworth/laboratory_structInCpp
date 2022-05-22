@@ -321,6 +321,28 @@ namespace lbw {
         }
 
         /**
+         * Добовляет элементs в множество.
+         *
+         * @param l список инициализации
+         * @throws Выбрасывает исключение, если элемент больше максимально допустимого элемента множества
+         */
+        void insert(const std::initializer_list<unsigned> &l) {
+            for (const auto &element: l)
+                insert(element);
+        }
+
+        /**
+         * Добовляет элементs в множество.
+         *
+         * @param v вектор
+         * @throws Выбрасывает исключение, если элемент больше максимально допустимого элемента множества
+         */
+        void insert(const std::vector<unsigned> &v) {
+            for (const auto &element: v)
+                insert(element);
+        }
+
+        /**
          * Проверяет на нахождение элемента в множестве.
          *
          * @param x элемент для поиска
@@ -328,31 +350,6 @@ namespace lbw {
          */
         bool find(const unsigned x) const noexcept {
             return (_data >> x) & 1;
-        }
-
-        /**
-         * Поиск первого элемента удовлетворяещего функции-предикату от [begin; end).
-         *
-         * @param begin начало поиска
-         * @param end конец поиска не включительно
-         * @param binaryPredicate унарный предикат.
-         * @throw Выбрасывает исключение если begin > end или end больше допустимого максимального в множестве
-         * @return Возвращает первый элемент удовлетворяющий функции-предикату, если элемент не найден возвращает
-         * Максимально допустимый элемент любого множества + 1;
-         */
-        // TODO доделать
-        unsigned find(unsigned begin, const unsigned end, std::function<bool(unsigned)> binaryPredicate) const {
-            try {
-                if (begin > end)
-                    throw std::invalid_argument("Begin greater than end");
-                else if (end > _maxValue)
-                    throw std::invalid_argument("Value is greater than max allowed element");
-
-            } catch (const std::exception &e) {
-                std::cerr << e.what();
-            }
-
-            return 0;
         }
 
         /**
@@ -532,7 +529,7 @@ namespace lbw {
 
             unsigned maxValue = 0;
             for (int i = _MAX_VALUE_SUPPORTED; i >= 0; i--)
-                if (lhs.find(i) || rhs.find(i)) {
+                if (lhs.find(i) && !rhs.find(i)) {
                     maxValue = i;
                     break;
                 }
@@ -560,7 +557,7 @@ namespace lbw {
                     break;
                 }
 
-            return BitSet(lhs._data ^ addition(rhs)._data, maxValue);
+            return BitSet(lhs._data ^ rhs._data, maxValue);
         }
 
         BitSet &operator=(const BitSet &other) noexcept {
@@ -576,22 +573,24 @@ namespace lbw {
             for (unsigned i = 0; i <= _MAX_VALUE_SUPPORTED; ++i)
                 if (a.find(i))
                     out << i << ',';
+
             out << "\b}";
 
             return out;
         }
 
         friend std::istream &operator>>(std::istream &in, BitSet &a) noexcept {
-            unsigned size, maxValue;
-            in >> size >> maxValue;
+            unsigned size;
+            in >> size;
 
-            BitSet t(maxValue);
+            std::vector<unsigned> v(size);
             for (size_t i = 0; i < size; ++i) {
                 unsigned x;
                 in >> x;
 
-                t.insert(x);
+                v[i] = x;
             }
+            BitSet t(v);
             a = t;
 
             return in;
@@ -681,6 +680,10 @@ namespace lbw {
          */
         long long getSum() const {
             return _prefixSum.back();
+        }
+
+        std::vector<long long> getVector() const {
+            return _prefixSum;
         }
 
         /**
