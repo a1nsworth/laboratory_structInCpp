@@ -365,3 +365,44 @@ TEST(BitSet_addition, full) {
     ASSERT_TRUE(c.getData() == 0);
     ASSERT_TRUE(c.getMaxValue() == 0);
 }
+
+TEST(BitSet_addition, onlyOneAtBegin) {
+    // Arrange
+    BitSet a = {0};
+
+    // Act
+    auto c = BitSet::addition(a);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 31);
+    ASSERT_TRUE(c.getData() == std::numeric_limits<uint32_t>::max() - 1);
+    ASSERT_TRUE(c.getMaxValue() == 31);
+}
+
+TEST(BitSet_addition, onlyOneAtEnd) {
+    // Arrange
+    BitSet a(30);
+    for (unsigned i = 0; i <= 30; ++i)
+        a.insert(i);
+
+    // Act
+    auto c = BitSet::addition(a);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 1);
+    ASSERT_EQ(c.getData(), (std::numeric_limits<uint32_t>::max() + (long long) 1) / 2);
+    ASSERT_TRUE(c.getMaxValue() == 31);
+}
+
+TEST(BitSet_difference, oneIsUnique) {
+    // Arrange
+    BitSet a(30);
+
+    // Act
+    auto c = BitSet::addition(a);
+
+    // Asserts
+    ASSERT_TRUE(c.getPower() == 1);
+    ASSERT_EQ(c.getData(), (std::numeric_limits<uint32_t>::max() + (long long) 1) / 2);
+    ASSERT_TRUE(c.getMaxValue() == 31);
+}
