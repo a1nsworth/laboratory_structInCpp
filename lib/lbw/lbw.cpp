@@ -385,8 +385,10 @@ namespace lbw {
                 else if (end > _maxValue)
                     throw std::invalid_argument("Value is greater than max allowed element");
 
-                while (begin++ != end)
+                while (begin != end) {
                     erase(begin);
+                    begin++;
+                }
 
             } catch (const std::exception &e) {
                 std::cerr << e.what();
@@ -639,8 +641,10 @@ namespace lbw {
         template<typename ForwardIter1, typename ForwardIter2>
         PrefixSum(ForwardIter1 first, const ForwardIter2 last) {
             _prefixSum.push_back(0);
-            while (first++ != last)
+            while (first != last) {
                 _prefixSum.push_back(_prefixSum.back() + *first);
+                first++;
+            }
         }
 
         /**
@@ -650,7 +654,7 @@ namespace lbw {
          * @param v вектор из которого будет инициализирован вектор префиксных сумм
          */
         template<typename T>
-        PrefixSum(const std::vector<T> &v) : PrefixSum(v.begin(), v.end) {}
+        PrefixSum(const std::vector<T> &v) : PrefixSum(v.begin(), v.end()) {}
 
         /**
          *  Инициализирует вектор префиксных сумм из массива.
@@ -659,8 +663,10 @@ namespace lbw {
          * @param a указатель на ячейку памяти
          * @param n размер
          */
-        template<typename T>
-        PrefixSum(const T *a, const size_t n) : PrefixSum(a, a + n) {}
+        PrefixSum(int *a, int n) : PrefixSum(a, a + n) {}
+
+        template <typename T>
+        PrefixSum(const std::initializer_list<T> &l) : PrefixSum(l.begin(), l.end()) {}
 
         /**
          * Получает префиксную сумму в диапазоне [l;r)
@@ -669,8 +675,15 @@ namespace lbw {
          * @param r конец не включительно
          * @return Возвращает префиксную сумму в диапазоне [l;r)
          */
-        long long getSum(const size_t l, const size_t r) const {
-            return _prefixSum[r] - _prefixSum[l];
+        [[nodiscard]] long long getSum(const size_t l, const size_t r) const {
+            try {
+                if (l >= _prefixSum.size() || r >= _prefixSum.size() || l >= r)
+                    throw std::out_of_range("bad index");
+
+                return _prefixSum[r] - _prefixSum[l];
+            } catch (const std::exception& e) {
+                std::cerr << e.what();
+            }
         }
 
         /**
@@ -678,11 +691,11 @@ namespace lbw {
          *
          * @return Возвращает префиксную сумму всего вектора
          */
-        long long getSum() const {
+        [[nodiscard]] long long getSum() const {
             return _prefixSum.back();
         }
 
-        std::vector<long long> getVector() const {
+        [[nodiscard]] std::vector<long long> getVector() const {
             return _prefixSum;
         }
 
@@ -693,13 +706,14 @@ namespace lbw {
          * @param i индекс элемента, который нужно заменить
          * @throw Выбрасывает исключение, если индекс выходит за диапазон
          */
-        void set(const long long value, const size_t i) {
+        void set(const size_t i, const long long value) {
             try {
                 if (i >= _prefixSum.size())
                     throw std::invalid_argument("Invalid index");
 
+                long long difference = _prefixSum[i + 1] - _prefixSum[i] - value;
                 for (size_t j = i + 1; j <= _prefixSum.size(); ++j)
-                    _prefixSum[j] -= -_prefixSum[j - 1] + value;
+                    _prefixSum[j] -= difference;
 
             } catch (const std::exception &e) {
                 std::cerr << e.what();
